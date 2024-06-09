@@ -15,15 +15,23 @@ const pool = new Pool({
 // Función para Obtener Joyas
 const obtenerJoyas = async ({ limits = 10, order_by = "id_ASC",
 page = 1}) => {
+    try {
 const [campo, direccion] = order_by.split("_")
 const offset = (page - 1) * limits
 const formattedQuery = format('SELECT * FROM inventario order by %s %s LIMIT %s OFFSET %s', campo, direccion, limits, offset);
 pool.query(formattedQuery);
 const { rows: joyas } = await pool.query(formattedQuery)
 return joyas
+
+} catch (error) {
+    console.error("Error en la consulta obtenerJoyas:", error);
+    throw error;
+}
 }
 
 const obtenerJoyasPorFiltros = async ({ precio_min, precio_max, categoria, metal }) => {
+
+    try {
     let filtros = []
     if (precio_min) filtros.push(`precio >= ${precio_min}`)
     if (precio_max) filtros.push(`precio <= ${precio_max}`)
@@ -36,6 +44,11 @@ const obtenerJoyasPorFiltros = async ({ precio_min, precio_max, categoria, metal
     }
     const { rows: joyas } = await pool.query(consulta)
     return joyas
+
+} catch (error) {
+    console.error("Error en la consulta obtenerJoyasPorFiltros:", error);
+    throw error;
+}
     }
 
 
